@@ -4,19 +4,19 @@ from keras.models import  load_model
 
 video = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
-model = load_model('Keras_model.h5',compile=False)
+model = load_model('./models/Keras_model.h5',compile=False)
 data = np.ndarray(shape=(1,224,224,3),dtype=np.float32)
-classes = [25, 50]
+classes = [25, 50, 100]
 
-def pre_process(img):
+def preprocess_image(img):
     kernel = np.ones((4, 4), np.uint8)
 
-    img_pro = cv2.GaussianBlur(img,(5,5),3)
-    img_pro = cv2.Canny(img_pro,90,140)
-    img_pro = cv2.dilate(img_pro, kernel, iterations=2)
-    img_pro = cv2.erode(img_pro, kernel, iterations=1)
+    img_processed = cv2.GaussianBlur(img,(5,5),3)
+    img_processed = cv2.Canny(img_processed,90,140)
+    img_processed = cv2.dilate(img_processed, kernel, iterations=2)
+    img_processed = cv2.erode(img_processed, kernel, iterations=1)
 
-    return img_pro
+    return img_processed
 
 def detect_coin(img):
     coin_img = cv2.resize(img,(224,224))
@@ -32,28 +32,24 @@ def detect_coin(img):
 while True:
     _,img = video.read()
     img = cv2.resize(img, (640, 480))
-    img_pro = pre_process(img)
-    countors,hi = cv2.findContours(img_pro, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_NONE)
+    img_processed = preprocess_image(img)
 
-    count_value = 0
+    countors, hi = cv2.findContours(img_processed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
     for cnt in countors:
         area = cv2.contourArea(cnt)
-        if area > 2000:
-            x, y, w, h = cv2.boundingRect(cnt)
-            cv2.rectangle(img,(x,y), (x + w, y + h), (0, 255, 0), 2)
-            coin_frame = img[y:y + h, x:x + w]
 
+        if area >= 2000:
+            x, y, w, h = cv2.boundingRect(cnt)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            coin_frame = img[y:y + h, x:x + w]
+            
             class_name, confidence_score = detect_coin(coin_frame)
 
             if confidence_score > 0.7:
                 cv2.putText(img, str(class_name), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255),2)
 
-                if class_name == 25: count_value += 0.25
-                if class_name == 50: count_value += 0.5
-
-    cv2.rectangle(img, (430, 30), (600, 80), (0, 0, 255), -1)
-    cv2.putText(img,f'R$ {count_value}',(440,67),cv2.FONT_HERSHEY_SIMPLEX,1.2,(255,255,255),2)
-
+    cv2.imshow('IMG PROCESSED', img_processed)
     cv2.imshow('IMG', img)
-    cv2.imshow('IMG PROCESSED', img_pro)
     cv2.waitKey(1)
