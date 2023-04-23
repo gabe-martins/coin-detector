@@ -12,7 +12,7 @@ train_datagen = keras.preprocessing.image.ImageDataGenerator(
 )
 
 train_generator = train_datagen.flow_from_directory(
-    '../images/dataset',
+    '../dataset/train',
     target_size=(224, 224),
     batch_size=32,
     class_mode='categorical',
@@ -20,7 +20,7 @@ train_generator = train_datagen.flow_from_directory(
 )
 
 validation_generator = train_datagen.flow_from_directory(
-    '../images/dataset',
+    '../dataset/train',
     target_size=(224, 224),
     batch_size=32,
     class_mode='categorical',
@@ -30,7 +30,7 @@ validation_generator = train_datagen.flow_from_directory(
 test_datagen = keras.preprocessing.image.ImageDataGenerator()
 
 test_generator = test_datagen.flow_from_directory(
-    '../images/dataset',
+    '../dataset/train',
     target_size=(224, 224),
     batch_size=32,
     class_mode='categorical'
