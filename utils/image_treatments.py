@@ -1,7 +1,21 @@
 from PIL import Image
 import os
+import random
+import shutil
 
 def resize_images(source_dir, size):
+    for filename in os.listdir(source_dir):
+        if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
+            # Open the image
+            image = Image.open(os.path.join(source_dir, filename))
+
+            # Resize the image
+            resized_image = image.resize(size)
+
+            # Overwrite the original image with the resized image
+            resized_image.save(os.path.join(source_dir, filename))
+
+def resize_images_and_copy(source_dir, size):
     """
     Resizes all images in the given source directory to the specified size
     and saves the resized images in a new directory called 'resized' within
@@ -66,5 +80,19 @@ def rename_files_with_prefix(directory, prefix):
                 # increment the counter for the next file
                 counter += 1
 
-#resize_images(source_dir=f'../images/dataset/50', size=(224, 224))
-rename_files_with_prefix(directory=f'../images/dataset/50/resized', prefix='')
+def slit_image_dataframe(diretorio_imagens, diretorio_destino):
+    # Lista com o nome de todas as imagens no diretório
+    lista_imagens = os.listdir(diretorio_imagens)
+
+    # Número de imagens que serão movidas (20% do total)
+    numero_imagens_a_mover = int(len(lista_imagens) * 0.2)
+
+    # Selecionar aleatoriamente as imagens a serem movidas
+    imagens_a_mover = random.sample(lista_imagens, numero_imagens_a_mover)
+
+    # Mover as imagens selecionadas para o diretório de destino
+    for imagem in imagens_a_mover:
+        caminho_imagem = os.path.join(diretorio_imagens, imagem)
+        caminho_destino = os.path.join(diretorio_destino, imagem)
+        shutil.move(caminho_imagem, caminho_destino)
+

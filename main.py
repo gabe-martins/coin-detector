@@ -4,7 +4,7 @@ from keras.models import  load_model
 
 video = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 
-model = load_model('./models/my_model.h5',compile=False)
+model = load_model('./models/keras_model.h5',compile=False)
 data = np.ndarray(shape=(1,224,224,3),dtype=np.float32)
 classes = [25, 50, 100]
 

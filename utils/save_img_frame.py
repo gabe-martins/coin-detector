@@ -4,7 +4,7 @@ from keras.models import  load_model
 
 video = cv2.VideoCapture(1,cv2.CAP_DSHOW)
 file_qtde = 0
-coin_num = 50
+coin_num = 25
 
 def pre_process(img):
     kernel = np.ones((4, 4), np.uint8)
@@ -27,8 +27,10 @@ while True:
 
         if area > 2000:
             x, y, w, h = cv2.boundingRect(cnt)
-            #cv2.rectangle(img,(x,y), (x + w, y + h), (0, 0, 0), 2)
+            cv2.rectangle(img,(x,y), (x + w, y + h), (0, 0, 0), 2)
+            
             coin_frame = img[y:y + h, x:x + w]
+
             key = cv2.waitKey(1) & 0xFF  # Espera por uma tecla
 
             if key == ord('s'):  # Se a tecla 's' for pressionada
